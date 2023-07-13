@@ -17,18 +17,19 @@
 
     // Initialize an empty variable to store the username
     $username = '';
+    $user_id = '';
     $imageData = '';
 
     // Check if the username session exists
-    if (isset($_SESSION['username'])) {
-        // Retrieve the username from the session
-        $username = $_SESSION['username'];
+    if (isset($_SESSION['user_id'])) {
+        // Retrieve the user_id from the session
+        $user_id = $_SESSION['user_id'];
     }
     $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
     $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
-    $query = "SELECT avatar FROM usercredential WHERE username = :username";
+    $query = "SELECT avatar FROM usercredential WHERE user_id = :user_id";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
