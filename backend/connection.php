@@ -17,13 +17,13 @@ try {
 //check if the user exists in the database
 //login conncetion 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST["username"];
+    $user_id = $_POST["user_id"];
     $password = $_POST["password"];
 
     // Query the database to check if the user exists
-    $query = "SELECT * FROM usercredential WHERE username = :username";
+    $query = "SELECT * FROM usercredential WHERE user_id = :user_id";
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(":username", $username);
+    $stmt->bindParam(":user_id", $user_id);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($password === $user["password"]) {
             // Password is correct
             session_start();
-            $_SESSION['username'] = $username;
+            $_SESSION['user_id'] = $user_id;
     
             // Check the user role
             $role = $user["role"];

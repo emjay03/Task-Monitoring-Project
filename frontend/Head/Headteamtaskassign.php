@@ -12,23 +12,25 @@
 
 <body>
   <?php
-  session_start();  
-
-  if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
+  session_start();
+  $user_id = '';
+  if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
   }
   $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
+ 
   
-    $query = "SELECT * FROM usercredential WHERE username = :username";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result && !empty($result['avatar'])) {
-        $imageData = $result['avatar'];
-    }
-  
+  $query = "SELECT * FROM usercredential WHERE user_id = :user_id";
+  $stmt = $conn->prepare($query);
+  $stmt->bindParam(':user_id', $user_id);
+  $stmt->execute();
+  $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($result && !empty($result['avatar'])) {
+    $imageData = $result['avatar'];
+  }
+
 
   //insert data to database 
   if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -55,7 +57,7 @@
       exit();
     }
   }
-//query for usercredential where role is documentation and frontend
+  //query for usercredential where role is documentation and frontend
   $credentialquery = "SELECT * FROM usercredential WHERE role='Documentation' OR role='Frontend'";
   $credentialstmt = $conn->prepare($credentialquery);
   $credentialstmt->execute();
@@ -63,7 +65,10 @@
 
 
   //query for task assign where role is documentation and frontend
-  $query = "SELECT * FROM taskassign WHERE role='Documentation' OR role='Frontend'";
+  $query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
+   FROM taskassign
+  JOIN usercredential ON taskassign.user_id = usercredential.user_id
+   WHERE taskassign.role='Documentation' OR taskassign.role='Frontend'";
   $stmt = $conn->prepare($query);
   $stmt->execute();
   $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -80,32 +85,40 @@
     header("Location: ./Headteamtaskassign.php");
     exit();
   }
-  
+
   if (isset($_POST['update_taskid']) && isset($_POST['update_task'])) {
     $taskid = $_POST['update_taskid'];
+    $subject = $_POST['update_subject'];  
+
     $updatedTask = $_POST['update_task'];
-  
-    $updateQuery = "UPDATE taskassign SET task=:task WHERE taskid=:taskid";
+
+
+    // Perform the database update operation
+    // Assuming you have a database connection established
+    $updateQuery = "UPDATE taskassign SET  subject=:subject,task=:task WHERE taskid=:taskid";
     $updateStmt = $conn->prepare($updateQuery);
+    $updateStmt->bindParam(':subject', $subject);
     $updateStmt->bindParam(':task', $updatedTask);
+
     $updateStmt->bindParam(':taskid', $taskid);
     $updateStmt->execute();
+
+    // Redirect to the desired page after the update
     header("Location: ./Headteamtaskassign.php");
     exit();
   }
 
-  if (isset($_POST['taskid'])) {
-    // Generate the task ID
-    $prefix = "Task_";
-    $query = "SELECT MAX(RIGHT(taskid, 2)) AS max_id FROM taskassign";
-    $result = $conn->query($query)->fetch(PDO::FETCH_ASSOC);
-    $max_id = $result['max_id'];
-    $next_id = str_pad((intval($max_id) + 1), 2, '0', STR_PAD_LEFT);
-    $taskid = $prefix . $next_id;
-  
-    // Retrieve other form values
-    $taskid = $_POST['taskid'];
-  }
+  $totalRowCount = 0; // Initialize the variable
+
+    $countQuery = "SELECT COUNT(*) FROM taskassign";
+    $countStmt = $conn->prepare($countQuery);
+    
+    if ($countStmt) {
+        $countStmt->execute();
+        $totalRowCount = $countStmt->fetchColumn();
+    }
+
+
   include "../include/Headsidebar.php";
   ?>
 
@@ -116,7 +129,7 @@
 
   <div class="p-4 sm:ml-64">
     <div class="p-4 w-full flex-row  gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-
+   
 
 
       <nav class="flex" aria-label="Breadcrumb">
@@ -149,6 +162,7 @@
       </button>
       <div class="py-2"></div>
       <!-- Main modal -->
+
       <div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative w-full max-w-2xl max-h-full">
           <!-- Modal content -->
@@ -173,31 +187,31 @@
                     <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User ID</label>
 
                     <select id="userid" name="userid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <?php foreach ($credentialresult as $row) : ?>
-    <option value="<?php echo $row['user_id']; ?>"><?php echo $row['user_id']; ?></option>
-  <?php endforeach; ?>
+                      <?php foreach ($credentialresult as $row) : ?>
+                        <option value="<?php echo $row['user_id']; ?>"><?php echo $row['user_id']; ?></option>
+                      <?php endforeach; ?>
                     </select>
 
 
                   </div>
-                
+
 
                   <div class="mb-6 w-full">
-    <label for="taskid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task ID</label>
-    <input type="text" id="taskid" name="taskid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"   required >
-  </div>
+                    <label for="taskid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task ID</label>
+                    <input type="text" id="taskid" name="taskid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  </div>
                 </div>
                 <div class="mb-6 w-full">
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
-                    <input type="text" id="subject" name="subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                  </div>
+                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
+                  <input type="text" id="subject" name="subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </div>
                 <div class="mb-6">
                   <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
                   <textarea rows="4" type="text" id="task" name="task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required></textarea>
                 </div>
                 <div class="mb-6">
                   <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                  <input type="text" id="role" name="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <input type="text" id="role" name="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
 
                 <div class="mb-6">
@@ -215,94 +229,139 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-3 w-full gap-4  ">
+      <div class="grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
+        
         <?php foreach ($result as $row) : ?>
-          <div class="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><?php echo $row['user_id']; ?></h5>
-           <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $row['taskid']; ?></p> 
-           <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $row['subject']; ?></p>
-           <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $row['task']; ?></p>
-            <form action="./Headteamtaskassign.php" method="GET">
-        <input type="hidden" name="delete_taskid" value="<?php echo $row['taskid']; ?>">
-        <button type="submit" onclick="return confirm('Are you sure you want to delete this task assignment?')">Delete</button>
-      </form>
 
-      <!-- Modal toggle -->
-<button data-modal-target="updateModal" data-modal-toggle="updateModal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-  Toggle modal
-</button>
-
-<!-- Main modal -->
-<div id="updateModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative w-full max-w-2xl max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <!-- Modal header -->
-            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    Terms of Service
-                </h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="updateModal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
+          <div class="block w-full p-6 bg-yellow-100 border  rounded-lg    dark:bg-gray-800 dark:border-gray-700  ">
+            <div class="flex justify-between gap-2 items-center">
+              <div class="flex items-center gap-2">
+                <?php if ($row['avatar']) : ?>
+                  <img class="w-7 h-7 rounded-full" src="data:image/jpeg;base64,<?php echo base64_encode($row['avatar']); ?>" alt="User Avatar" class="rounded-full w-16 h-16">
+                <?php else : ?>
+                  <span>No Avatar</span>
+                <?php endif; ?>
+                <h5 class=" text-base font-semibold tracking-tight text-gray-900 dark:text-white"><?php echo $row['username']; ?></h5>
+              </div>
+              <div>
+                <p class="text-green-500 text-semibold"><?php echo $row['status'] ?></p>
+              </div>
             </div>
-            <!-- Modal body -->
-            <div class="p-6 space-y-6">
-            <form action="./Headteamtaskassign.php" method="POST">
-        <input type="text" name="update_taskid" value="<?php echo $row['taskid']; ?>">
-        <div class="mb-6 w-full">
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
-                    <input type="text" id="update_task" name="udpate_task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['task']; ?>">
+            <div class=" py-3">
+
+              <p class=" font-bold text-gray-700"><?php echo $row['subject']; ?></p>
+            </div>
+
+
+            <p class="font-normal text-gray-700 dark:text-gray-400 mb-3"><?php echo $row['task']; ?></p>
+            <div class="flex gap-2">
+              <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" type="button" onclick="deleteTask('<?php echo $row['taskid']; ?>')">Delete</button>
+
+
+
+              <button data-modal-target="updateModal<?php echo $row['taskid']; ?>" data-modal-toggle="updateModal<?php echo $row['taskid']; ?>" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" type="button">
+                Update</button>
+            </div>
+
+            <div id="updateModal<?php echo $row['taskid']; ?>" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+              <div class="relative w-full max-w-2xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                  <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                      Update Task
+                    </h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="updateModal<?php echo $row['taskid']; ?>">
+                      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                      </svg>
+                      <span class="sr-only">Close modal</span>
+                    </button>
                   </div>
- 
+                  <div class="p-6 space-y-6">
+                    <form action="./Headteamtaskassign.php" method="POST">
+                      <input type="hidden" name="update_taskid" value="<?php echo $row['taskid']; ?>">
 
-        <button type="submit">Update</button>
-      </form>
+
+                      <div class="mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
+                        <input type="text" id="update_subject" name="update_subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['subject'] ?>">
+                      </div>
+                      <div class="mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
+
+                        <textarea type="text" rows="5" id="update_task" name="update_task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"><?php echo $row['task'] ?></textarea>
+                      </div>
+                      <div class="mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['status'] ?>" readonly>
+                      </div>
+
+
+
+                      <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button data-modal-hide="updateModal<?php echo $row['taskid']; ?>" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
-            <!-- Modal footer -->
-            <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button data-modal-hide="updateModal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I accept</button>
-                <button data-modal-hide="updateModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
-            </div>
-        </div>
-    </div>
-</div>
-      
-   
-
-
           </div>
-         
         <?php endforeach; ?>
       </div>
 
 
 
-
-
     </div>
   </div>
+
   <script>
-  const userIdDropdown = document.getElementById('userid');
-  const roleInput = document.getElementById('role');
+    // Get references to the user ID dropdown and role input field
+    const useridDropdown = document.getElementById('userid');
+    const roleInput = document.getElementById('role');
 
-  userIdDropdown.addEventListener('change', () => {
-    const selectedUserId = userIdDropdown.value;
-    // Find the corresponding credential for the selected user ID
-    const selectedCredential = <?php echo json_encode($credentialresult); ?>.find(row => row.user_id === selectedUserId);
+    // Add event listener to the user ID dropdown
+    useridDropdown.addEventListener('change', function() {
+      // Get the selected option value
+      const selectedUserId = useridDropdown.value;
 
-    if (selectedCredential) {
-      // Set the role input field value based on the selected credential
-      roleInput.value = selectedCredential.role;
-    } else {
-      // If no credential found, clear the role input field
-      roleInput.value = '';
+      // Iterate over the credential result options
+      <?php foreach ($credentialresult as $row) : ?>
+        <?php echo "if (selectedUserId === '{$row['user_id']}') { roleInput.value = '{$row['role']}'; }"; ?>
+      <?php endforeach; ?>
+    });
+
+
+    function deleteTask(taskId) {
+      if (confirm('Are you sure you want to delete this task assignment?')) {
+        // Create an XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Set up a callback function to handle the response
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              // Request successful, do something with the response
+              console.log(xhr.responseText);
+            } else {
+              // Request failed, show an error message
+              console.error('Request failed. Status:', xhr.status);
+            }
+          }
+        };
+
+        // Open a GET request to the server-side script
+        xhr.open('GET', './Headteamtaskassign.php?delete_taskid=' + taskId, true);
+
+        // Send the request
+        xhr.send();
+      }
     }
-  });
-</script>
+
+
+ 
+  </script>
 </body>
 
 </html>
