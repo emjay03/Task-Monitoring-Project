@@ -81,59 +81,98 @@
         </ol>
       </nav>
       <div class="py-2"></div>
-    <div class=" taskTableContainer grid grid-cols-3 gap-4  ">
-            
-            <?php foreach ($tasks as $task) : ?>
-            <div class="taskItem block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                
+      <div>
+      <h1>PENDING TASK</h1>
+      <div class="taskTableContainer grid grid-cols-3 gap-4  ">
+         
+    <div class="taskColumn  ">
+    
+        <?php foreach ($tasks as $task) : ?>
+            <?php if ($task['status'] === 'pending') : ?>
+           
+                <div class="taskItem block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><?php echo $task['taskid']; ?></h5>
                     <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['subject']; ?></p>
                     <div class="py-2"></div>
                     <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['task']; ?></p>
-             
-            </div>
-            <?php endforeach; ?>
-        </div>
+                    <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['status']; ?></p>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+
+</div>
+      </div>
+
+<div class="py-2"></div>
+<div class="taskTableContainers    grid grid-cols-3 gap-4  ">
+    <div class="taskColumn w-full     ">
+       
+        <?php foreach ($tasks as $task) : ?>
+            <?php if ($task['status'] === 'ongoing') : ?>
+                <div class="ongoingItem block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><?php echo $task['taskid']; ?></h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['subject']; ?></p>
+                    <div class="py-2"></div>
+                    <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['task']; ?></p>
+                    <p class="font-normal text-gray-700 dark:text-gray-400"><?php echo $task['status']; ?></p>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+
+</div>
+
     </div>
 </div>
 
- 
 <script>
-    // Function to update the task table using AJAX
-    function updateTaskTable() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      var taskTableContainer = document.querySelector(".taskTableContainer");
+  function updateTaskTable() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var taskTableContainer = document.querySelector(".taskTableContainer");
+        var taskTableContainers = document.querySelector(".taskTableContainers");
 
-      // Clear existing task items
-      while (taskTableContainer.firstChild) {
-        taskTableContainer.firstChild.remove();
+        // Clear existing task items in both containers
+        while (taskTableContainer.firstChild) {
+          taskTableContainer.firstChild.remove();
+        }
+
+        while (taskTableContainers.firstChild) {
+          taskTableContainers.firstChild.remove();
+        }
+
+        // Parse the response text as HTML
+        var parser = new DOMParser();
+        var responseDoc = parser.parseFromString(this.responseText, "text/html");
+
+        // Get the task items from the parsed HTML
+        var taskItems = responseDoc.querySelectorAll(".taskItem");
+        var ongoingItems = responseDoc.querySelectorAll(".ongoingitem");
+
+        // Append each task item to the task table container
+        taskItems.forEach(function(taskItem) {
+          taskTableContainer.appendChild(taskItem);
+        });
+
+        // Append each ongoing item to the task table container
+        ongoingItems.forEach(function(ongoingItem) {
+          taskTableContainers.appendChild(ongoingItem);
+        });
       }
+    };
 
-      // Parse the response text as HTML
-      var parser = new DOMParser();
-      var responseDoc = parser.parseFromString(this.responseText, "text/html");
+    // Update pending tasks
+    xhttp.open("GET", "./Userdashboard.php", true);
+    xhttp.send();
+  }
 
-      // Get the task items from the parsed HTML
-      var taskItems = responseDoc.querySelectorAll(".taskItem");
-
-      // Append each task item to the task table container
-      taskItems.forEach(function(taskItem) {
-        taskTableContainer.appendChild(taskItem);
-      });
-    }
-  };
-  xhttp.open("GET", "./Userdashboard.php", true);
-  xhttp.send();
-}
-
-
-updateTaskTable();
-setInterval(updateTaskTable, 1000);
-
-
+  // Call the function once initially and then every 1000 milliseconds (1 second)
+  updateTaskTable();
+  setInterval(updateTaskTable, 1000);
 </script>
+
   
  
  
