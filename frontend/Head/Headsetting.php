@@ -13,69 +13,7 @@
 <body>
     <?php
 
-    session_start();
-    //retrive data from database
-    $username = '';
-    $userid = '';
-    $imageData = '';
-    $role = '';
-
-    if (isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
-    }
-    $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
-    $query = "SELECT * FROM usercredential WHERE username = :username";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-    if ($result) {
-        $userid = $result['user_id'];
-        $role = $result['role'];
-    }
-    if ($result && !empty($result['avatar'])) {
-        $imageData = $result['avatar'];
-    }
-    //update data to database
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-        $updateusername = $_POST['updateusername'];
-        $updatepassword = $_POST['updatepassword'];
-        $confirmpassword = $_POST['confirmpassword'];
-
-        $avatar = $_FILES['avatar']['tmp_name'];
-
-        if ($updatepassword === $confirmpassword) {
-            $updatequery = "UPDATE usercredential SET username=:updateusername,avatar=:avatar,password=:updatepassword,confirmpassword=:confirmpassword WHERE user_id=:userid";
-            $updatestmt = $conn->prepare($updatequery);
-            $updatestmt->bindParam(':updateusername', $updateusername);
-            $updatestmt->bindParam(':avatar', $avatar);
-            $updatestmt->bindParam(':updatepassword', $updatepassword);
-            $updatestmt->bindParam(':confirmpassword', $confirmpassword);
-            $updatestmt->bindParam(':userid', $userid);
-            $updatestmt->execute();
-
-            // Retrieve the updated data from the database
-            $query = "SELECT * FROM usercredential WHERE user_id = :userid";
-            $stmt = $conn->prepare($query);
-            $stmt->bindParam(':userid', $userid);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($result) {
-                $username = $result['username'];
-                $imageData = $result['avatar'];
-                // Update the session with the new username
-                $_SESSION['username'] = $username;
-            }
-
-            exit(header("Location: ./Headsetting.php"));
-        } else {
-            echo "password not match";
-        }
-    }
+    include "../../backend/connection.php";
 
     include "../include/Headsidebar.php";
     ?>
@@ -112,8 +50,8 @@
                 <div class="mb-6">
                     <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
                     <input type="text" id="updateusername" name="updateusername" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php if (!empty($username)) : echo $username;
-                                                                                                                                                                                                                                                                                                                                                                    else : echo "username not found";
-                                                                                                                                                                                                                                                                                                                                                                    endif; ?>" required>
+                                                                                                                                                                                                                                                                                                                                                                    else : echo "userid not found";
+                                                                                                                                                                                                                                                                                                                                                                    endif; ?>">
                 </div>
                 <div class="mb-6">
                     <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>

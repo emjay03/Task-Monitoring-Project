@@ -12,113 +12,11 @@
 
 <body>
   <?php
-  session_start();
-  $user_id = '';
-  if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-  }
-  $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
+include '../../backend/connection.php';
  
-  
-
-  $query = "SELECT * FROM usercredential WHERE user_id = :user_id";
-  $stmt = $conn->prepare($query);
-  $stmt->bindParam(':user_id', $user_id);
-  $stmt->execute();
-  $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-  if ($result && !empty($result['avatar'])) {
-    $imageData = $result['avatar'];
-  }
-
-
-  //insert data to database 
-  if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $userid = $_POST['userid'] ?? ''; // Empty value
-    $taskid = $_POST['taskid'] ?? ''; // Empty value
-    $subject = $_POST['subject'] ?? ''; // Empty value
-    $task = $_POST['task'] ?? ''; // Empty value
-    $role = $_POST['role'] ?? ''; // Empty value
-    $status = $_POST['status'] ?? ''; // Empty value
-
-    if (!empty($userid) || !empty($subject)) {
-      $insertQuery = "INSERT INTO taskassign (user_id,taskid, subject,task,role,status) VALUES (:userid,:taskid, :subject,:task,:role,:status)";
-
-      $insertStmt = $conn->prepare($insertQuery);
-      $insertStmt->bindParam(':userid', $userid);
-      $insertStmt->bindParam(':taskid', $taskid);
-      $insertStmt->bindParam(':subject', $subject);
-      $insertStmt->bindParam(':task', $task);
-      $insertStmt->bindParam(':role', $role);
-      $insertStmt->bindParam(':status', $status);
-
-      $insertStmt->execute();
-      header("Location: ./Headteamtaskassign.php");
-      exit();
-    }
-  }
-  //query for usercredential where role is documentation and frontend
-  $credentialquery = "SELECT * FROM usercredential WHERE role='Documentation' OR role='Frontend'";
-  $credentialstmt = $conn->prepare($credentialquery);
-  $credentialstmt->execute();
-  $credentialresult = $credentialstmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-  //query for task assign where role is documentation and frontend
-  $query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
-   FROM taskassign
-  JOIN usercredential ON taskassign.user_id = usercredential.user_id
-   WHERE taskassign.role='Documentation' OR taskassign.role='Frontend'";
-  $stmt = $conn->prepare($query);
-  $stmt->execute();
-  $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-  //query delete for task assign where role is documentation and frontend
-  if (isset($_GET['delete_taskid'])) {
-    $taskid = $_GET['delete_taskid'];
-
-    $deleteQuery = "DELETE FROM taskassign WHERE taskid=:taskid";
-    $deleteStmt = $conn->prepare($deleteQuery);
-    $deleteStmt->bindParam(':taskid', $taskid);
-    $deleteStmt->execute();
-    header("Location: ./Headteamtaskassign.php");
-    exit();
-  }
-
-  if (isset($_POST['update_taskid']) && isset($_POST['update_task'])) {
-    $taskid = $_POST['update_taskid'];
-    $subject = $_POST['update_subject'];  
-
-    $updatedTask = $_POST['update_task'];
-
-
-    // Perform the database update operation
-    // Assuming you have a database connection established
-    $updateQuery = "UPDATE taskassign SET  subject=:subject,task=:task WHERE taskid=:taskid";
-    $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->bindParam(':subject', $subject);
-    $updateStmt->bindParam(':task', $updatedTask);
-
-    $updateStmt->bindParam(':taskid', $taskid);
-    $updateStmt->execute();
-
-    // Redirect to the desired page after the update
-    header("Location: ./Headteamtaskassign.php");
-    exit();
-  }
-
-  $totalRowCount = 0; // Initialize the variable
-
-    $countQuery = "SELECT COUNT(*) FROM taskassign";
-    $countStmt = $conn->prepare($countQuery);
-    
-    if ($countStmt) {
-        $countStmt->execute();
-        $totalRowCount = $countStmt->fetchColumn();
-    }
-
-
+   
+ 
+ 
   include "../include/Headsidebar.php";
   ?>
 
@@ -229,11 +127,11 @@
         </div>
       </div>
 
-      <div class="grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
+      <div class="taskTableContainer grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
         
         <?php foreach ($result as $row) : ?>
 
-          <div class="block w-full p-6 bg-yellow-100 border  rounded-lg    dark:bg-gray-800 dark:border-gray-700  ">
+          <div class=" taskItem  block w-full p-6 bg-yellow-100 border  rounded-lg    dark:bg-gray-800 dark:border-gray-700  ">
             <div class="flex justify-between gap-2 items-center">
               <div class="flex items-center gap-2">
                 <?php if ($row['avatar']) : ?>
@@ -293,7 +191,7 @@
                       </div>
                       <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['status'] ?>" readonly>
+                        <input type="text" id="update_status" name="update_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['status'] ?>"  >
                       </div>
 
 
@@ -359,6 +257,10 @@
       }
     }
 
+  
+
+ 
+  
 
  
   </script>
