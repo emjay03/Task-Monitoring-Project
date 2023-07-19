@@ -13,30 +13,7 @@
 <body>
     <?php
     // Start the session
-    session_start();
-
-    // Initialize an empty variable to store the username
-    $username = '';
-    $user_id = '';
-    $imageData = '';
-
-    // Check if the username session exists
-    if (isset($_SESSION['user_id'])) {
-        // Retrieve the user_id from the session
-        $user_id = $_SESSION['user_id'];
-    }
-    $conn = new PDO("mysql:host=localhost;dbname=taskmonitoring", "root", "");
-   
-    $query = "SELECT avatar FROM usercredential WHERE user_id = :user_id";
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // Save the image data if it exists
-    if ($result && !empty($result['avatar'])) {
-        $imageData = $result['avatar'];
-    }
+ include "../../backend/connection.php";
 
     include "../include/Headsidebar.php";
     ?>
