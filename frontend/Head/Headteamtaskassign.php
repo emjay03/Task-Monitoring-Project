@@ -8,15 +8,12 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../Login/Login.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.js"></script>
+  <script src="../taskmonitoring.js"></script>
 </head>
 
 <body>
   <?php
-include '../../backend/connection.php';
- 
-   
- 
- 
+  include "../../backend/connection.php";
   include "../include/Headsidebar.php";
   ?>
 
@@ -24,10 +21,9 @@ include '../../backend/connection.php';
 
 
 
-
   <div class="p-4 sm:ml-64">
     <div class="p-4 w-full flex-row  gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-   
+
 
 
       <nav class="flex" aria-label="Breadcrumb">
@@ -100,21 +96,25 @@ include '../../backend/connection.php';
                   </div>
                 </div>
                 <div class="mb-6 w-full">
-                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
+                  <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subject</label>
                   <input type="text" id="subject" name="subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
                 <div class="mb-6">
-                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
+                  <label   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
                   <textarea rows="4" type="text" id="task" name="task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required></textarea>
                 </div>
                 <div class="mb-6">
-                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
+                  <label   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
                   <input type="text" id="role" name="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
 
                 <div class="mb-6">
-                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                  <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                   <input type="text" id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </div>
+                <div class="mb-6">
+                  <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date task assign</label>
+                  <input type="datetime-local" id="date_time_taskassign" name="date_time_taskassign" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
                 <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                   <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
@@ -128,7 +128,7 @@ include '../../backend/connection.php';
       </div>
 
       <div class="taskTableContainer grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
-        
+
         <?php foreach ($result as $row) : ?>
 
           <div class=" taskItem  block w-full p-6 bg-yellow-100 border  rounded-lg    dark:bg-gray-800 dark:border-gray-700  ">
@@ -191,7 +191,7 @@ include '../../backend/connection.php';
                       </div>
                       <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                        <input type="text" id="update_status" name="update_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['status'] ?>"  >
+                        <input type="text" id="update_status" name="update_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['status'] ?>">
                       </div>
 
 
@@ -213,7 +213,6 @@ include '../../backend/connection.php';
 
     </div>
   </div>
-
   <script>
     // Get references to the user ID dropdown and role input field
     const useridDropdown = document.getElementById('userid');
@@ -229,40 +228,6 @@ include '../../backend/connection.php';
         <?php echo "if (selectedUserId === '{$row['user_id']}') { roleInput.value = '{$row['role']}'; }"; ?>
       <?php endforeach; ?>
     });
-
-
-    function deleteTask(taskId) {
-      if (confirm('Are you sure you want to delete this task assignment?')) {
-        // Create an XMLHttpRequest object
-        var xhr = new XMLHttpRequest();
-
-        // Set up a callback function to handle the response
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              // Request successful, do something with the response
-              console.log(xhr.responseText);
-            } else {
-              // Request failed, show an error message
-              console.error('Request failed. Status:', xhr.status);
-            }
-          }
-        };
-
-        // Open a GET request to the server-side script
-        xhr.open('GET', './Headteamtaskassign.php?delete_taskid=' + taskId, true);
-
-        // Send the request
-        xhr.send();
-      }
-    }
-
-  
-
- 
-  
-
- 
   </script>
 </body>
 
