@@ -228,6 +228,17 @@
         <?php echo "if (selectedUserId === '{$row['user_id']}') { roleInput.value = '{$row['role']}'; }"; ?>
       <?php endforeach; ?>
     });
+
+    document.getElementById("taskid").addEventListener("focus", function () {
+    const prefix = "Task_";
+    let currentValue = this.value.trim();
+
+    if (!currentValue.startsWith(prefix)) {
+      // Generate the next Task ID based on the highest existing ID
+      const nextNum = <?php echo $currentNum + 1; ?>;
+      this.value = `${prefix}${nextNum.toString().padStart(2, "0")}`;
+    }
+  });
   </script>
 </body>
 

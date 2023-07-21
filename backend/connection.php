@@ -169,13 +169,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   }
 
+  
+ 
   //query for dropdown list 
   $credentialquery = "SELECT * FROM usercredential WHERE role='Documentation' OR role='Frontend'";
   $credentialstmt = $conn->prepare($credentialquery);
   $credentialstmt->execute();
   $credentialresult = $credentialstmt->fetchAll(PDO::FETCH_ASSOC);
 
-
+  $query = "SELECT MAX(taskid) AS max_id FROM taskassign";
+  try {
+      $stmt = $conn->query($query);
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      $maxID = $row['max_id'];
+      // Extract the numeric part of the Task ID to use for auto-increment
+      $currentNum = (int)substr($maxID, strlen("Task_"));
+  } catch (PDOException $e) {
+      die("Error: " . $e->getMessage());
+  }
     //query select taskassign join usercredential where role is documentation or frontend
     $query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
     FROM taskassign
@@ -247,5 +258,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       $countStmt->execute();
       $totalRowCount = $countStmt->fetchColumn();
   }
-
-?>
