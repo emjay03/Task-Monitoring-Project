@@ -1,3 +1,7 @@
+<?php
+  include "../../backend/connection.php";
+  include "../include/Headsidebar.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,12 +16,7 @@
 </head>
 
 <body>
-    <?php
 
-    include "../../backend/connection.php";
-
-    include "../include/Headsidebar.php";
-    ?>
 
     <div class="p-4 sm:ml-64">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">

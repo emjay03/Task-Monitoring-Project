@@ -1,3 +1,7 @@
+<?php
+include "../../backend/connection.php";
+include "../include/Usersidebar.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,16 +15,10 @@
 </head>
 
 <body>
-    <?php
-
-    include "../../backend/connection.php";
-
-    include "../include/Usersidebar.php";
-    ?>
 
     <div class="p-4 sm:ml-64">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-        <?php if ($error_message) : ?>
+            <?php if ($error_message) : ?>
                 <div id="MessageAlert" class="flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                     <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 1a9 9 0 1 0 9 9A9 9 0 0 0 10 1zm-.18 15a1.49 1.49 0 0 1-.32-.04A1.5 1.5 0 0 1 8 14.68V10a1 1 0 0 1 2 0v4.68a1.5 1.5 0 0 1-1.32 1.48A1.49 1.49 0 0 1 9.82 16zM10 8a1 1 0 0 1-1-1V5a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1z" />
@@ -33,15 +31,15 @@
             <?php endif; ?>
 
 
-            
-        <?php if ($success_message) : ?>
-        <div id="MessageAlert"  class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-  <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-  </svg>
+
+            <?php if ($success_message) : ?>
+                <div id="MessageAlert" class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                    <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                    </svg>
                     <span class="sr-only">Success</span>
                     <div>
-                    <span class="font-medium">Success alert!</span> <?php echo $success_message; ?>
+                        <span class="font-medium">Success alert!</span> <?php echo $success_message; ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -94,16 +92,15 @@
     </div>
 
     <script>
-setTimeout(function () {
-    var MessageAlert = document.getElementById('MessageAlert');
-    MessageAlert.style.transition = 'opacity 0.5s ease'; // Set the transition effect
-    MessageAlert.style.opacity = '0'; // Fade out the element
-    setTimeout(function () {
-        MessageAlert.remove(); // Remove the element from the DOM after the transition
-    }, 500); // Wait for the transition to complete before removing the element
-}, 4000);
-
-        </script>
+        setTimeout(function() {
+            var MessageAlert = document.getElementById('MessageAlert');
+            MessageAlert.style.transition = 'opacity 0.5s ease'; // Set the transition effect
+            MessageAlert.style.opacity = '0'; // Fade out the element
+            setTimeout(function() {
+                MessageAlert.remove(); // Remove the element from the DOM after the transition
+            }, 500); // Wait for the transition to complete before removing the element
+        }, 4000);
+    </script>
 </body>
 
 </html>

@@ -1,3 +1,7 @@
+<?php
+include "../../backend/connection.php";
+include "../include/Usersidebar.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,20 +16,9 @@
 </head>
 
 <body>
-  <?php
-  include "../../backend/connection.php";
-  include "../include/Usersidebar.php";
-  ?>
-
-
-
-
 
   <div class="p-4 sm:ml-64">
     <div class="p-4 w-full flex-row  gap-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-
-
-
       <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
           <li class="inline-flex items-center">
