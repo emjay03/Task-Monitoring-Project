@@ -109,7 +109,7 @@ while (checkUserIdInDatabase($generatedUserId)) {
                                     <div class="mb-6   w-full">
                                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User ID</label>
 
-                                        <input type="text" id="user_id" name="user_id" value="<?php echo $generatedUserId; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                        <input type="text" id="user_iduseracc" name="user_iduseracc" value="<?php echo $generatedUserId; ?>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
 
 
                                     </div>
@@ -117,19 +117,17 @@ while (checkUserIdInDatabase($generatedUserId)) {
 
                                     <div class="mb-6 w-full">
                                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                                        <input type="text" id="username" name="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                        <input type="text" id="username" name="usernameuseracc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                     </div>
                                 </div>
                                 <div class="mb-6 w-full">
-                                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Avatar</label>
-
-                                    <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="multiple_files" id="avatar" name="avatar" type="file" multiple>
-
-                                </div>
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Avatar</label>
+        <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="multiple_files" id="avatar" name="avataruseracc" type="file" multiple>
+    </div>
                                 <div class="mb-6 w-full ">
                                     <label for="taskid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                     <div class="flex flex-row gap-2">
-                                        <input type="text" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                        <input type="text" id="password" name="passworduseracc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                         <button type="button" id="generatePasswordBtn" class="  px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg focus:ring-blue-500 focus:ring-offset-blue-200 focus:outline-none">
                                             Generate
                                         </button>
@@ -138,7 +136,7 @@ while (checkUserIdInDatabase($generatedUserId)) {
 
                                 <div class="mb-6 w-full">
                                     <label for="taskid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                                    <select id="role" name="role" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <select id="role" name="roleuseracc" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                         <option selected>Choose a Role</option>
                                         <option value="Frontend">Frontend</option>
                                         <option value="Backend">Backend</option>
