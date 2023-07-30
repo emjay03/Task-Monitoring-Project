@@ -43,7 +43,10 @@ include "../include/Usersidebar.php";
 
 
       <div class="py-2"></div>
-      <h1 class="text-2xl font-semibold py-2">Pending Task</h1>
+      <div class="flex  items-center gap-2">
+      <h1 class="text-2xl font-semibold py-3">Pending Task</h1>
+      <span class="bg-blue-500  px-3 py-1 rounded-lg text-white text-sm font-bold  "><?php echo $totalRowCounts['pending']?></span>
+      </div>
       <div class=" grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
 
 
@@ -97,7 +100,7 @@ include "../include/Usersidebar.php";
                       </button>
                     </div>
 
-                    <div class="p-6 space-y-6">
+                    <div class="py-4 px-5 space-y-6">
 
 
                       <form action="./Userdashboard.php" method="POST">
@@ -127,8 +130,7 @@ include "../include/Usersidebar.php";
 
                         </div>
                         <p>Are you sure you want to accept this task?</p>
-
-                        <div class="flex items-center justify-end p-6 space-x-2 border-gray-200 rounded-b dark:border-gray-600">
+                        <div class="flex items-center justify-end  py-3 space-x-2 border-gray-200 rounded-b dark:border-gray-600">
                           <button data-modal-hide="updateModal<?php echo $row['taskid']; ?>" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No</button>
                           <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Yes</button>
                         </div>
@@ -148,7 +150,10 @@ include "../include/Usersidebar.php";
 
 
       <div class="py-2"></div>
+      <div class="flex  items-center gap-2">
       <h1 class="text-2xl font-semibold py-3">Ongoing Task</h1>
+      <span class="bg-blue-500  px-3 py-1 rounded-lg text-white text-sm font-bold  "><?php echo $totalRowCounts['ongoing']?></span>
+      </div>
       <div class=" grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
 
         <?php foreach ($result as $row) : ?>
@@ -186,7 +191,7 @@ include "../include/Usersidebar.php";
 
 
               <button data-modal-target="updateModal<?php echo $row['taskid']; ?>" data-modal-toggle="updateModal<?php echo $row['taskid']; ?>" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5    dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" type="button">
-                Update</button>
+               Add Proof</button>
 
 
               <div id="updateModal<?php echo $row['taskid']; ?>" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -204,7 +209,7 @@ include "../include/Usersidebar.php";
                       </button>
                     </div>
                     <div class="p-6 space-y-6">
-                      <form action="./Userdashboard.php" method="POST">
+                      <form action="./Userdashboard.php" method="POST" enctype="multipart/form-data">
 
 
                         <input type="hidden" name="update_taskid" value="<?php echo $row['taskid']; ?>">
@@ -219,6 +224,15 @@ include "../include/Usersidebar.php";
 
                           <textarea type="text" rows="5" id="update_task" name="update_task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" readonly><?php echo $row['task'] ?></textarea>
                         </div>
+                        <div class="mb-6">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image Proof</label>
+
+                          <input type="file" id="update_image_proof" name="update_image_proof" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </div>
+                        <div class=" mb-6">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
+                          <input type="text" id="update_comment" name="update_comment" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"   >
+                        </div>
                         <div class="hidden mb-6">
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
                           <input type="text" id="update_status" name="update_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="completed" readonly>
@@ -231,14 +245,14 @@ include "../include/Usersidebar.php";
                         </div>
                         <div class="mb-6">
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End task</label>
-                          <input type="datetime-local" name="updatedate_time_task_end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                          <input type="datetime-local" name="updatedate_time_task_end" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" readonly>
                         </div>
 
-                        <p>Are you sure you want to accept this task?</p>
+                         
 
                         <div class="flex items-center justify-end p-6 space-x-2 border-gray-200 rounded-b dark:border-gray-600">
                           <button data-modal-hide="updateModal<?php echo $row['taskid']; ?>" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No</button>
-                          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Yes</button>
+                          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                         </div>
                       </form>
                     </div>
@@ -255,7 +269,10 @@ include "../include/Usersidebar.php";
       </div>
 
       <div class="py-2"></div>
+      <div class="flex  items-center gap-2">
       <h1 class="text-2xl font-semibold py-3">Completed Task</h1>
+      <span class="bg-blue-500  px-3 py-1 rounded-lg text-white text-sm font-bold  "><?php echo $totalRowCounts['completed']?></span>
+      </div>
       <div class=" grid  grid-cols-1 lg:grid-cols-3  w-full gap-4">
 
         <?php foreach ($result as $row) : ?>
@@ -295,7 +312,7 @@ include "../include/Usersidebar.php";
               <div class="py-2"></div>
 
               <button data-modal-target="updateModal<?php echo $row['taskid']; ?>" data-modal-toggle="updateModal<?php echo $row['taskid']; ?>" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" type="button">
-                Update</button>
+                View</button>
 
 
               <div id="updateModal<?php echo $row['taskid']; ?>" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -303,7 +320,7 @@ include "../include/Usersidebar.php";
                   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                       <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Update Task
+                        Summary
                       </h3>
                       <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="updateModal<?php echo $row['taskid']; ?>">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -315,29 +332,58 @@ include "../include/Usersidebar.php";
                     <div class="p-6 space-y-6">
                       <form action="./Userdashboard.php" method="POST">
                         <input type="hidden" name="update_taskid" value="<?php echo $row['taskid']; ?>">
-
-
-                        <div class="mb-6">
+<div class="flex w-full gap-4">
+                        <div class="mb-6 w-full">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task ID</label>
+                          <input type="text" id="update_subject" name="update_subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['taskid'] ?>" disabled>
+                        </div>
+                        <div class="mb-6 w-full">
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Subjects</label>
                           <input type="text" id="update_subject" name="update_subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['subject'] ?>" disabled>
                         </div>
-                        <div class="mb-6">
+</div>
+ 
+                        <div class="mb-6 ">
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task</label>
 
                           <textarea type="text" rows="5" id="update_task" name="update_task" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled><?php echo $row['task'] ?></textarea>
                         </div>
-                        <div class="mb-6">
+                        <div class="flex w-full gap-4">
+                        <div class="mb-6 w-full">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image Proof</label>
+
+   <img src="data:image/jpeg;base64,<?php echo base64_encode($updatedImage); ?>" alt="img-Proof" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"/>
+</div>
+<div class="mb-6 w-full">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
+                          <input type="text"   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="<?php echo $row['comment'] ?>" disabled>
+                        </div>
+</div>
+                        <div class="flex w-full gap-4">
+                        <div class="mb-6 w-full">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Task Assigned</label>
+                          <input type="text"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value="<?php echo $row['date_time_taskassign'] ?>">
+                        </div>
+ 
+                        <div class="mb-6 w-full">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Task</label>
+                          <input type="text"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value="<?php echo $row['date_time_task_start'] ?>">
+                        </div>
+                        </div>
+                        <div class="flex w-full gap-4">
+                        <div class="mb-6 w-full">
+                          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Completed Task</label>
+                          <input type="text"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value="<?php echo $row['date_time_task_end'] ?>">
+                        </div>
+                        <div class="mb-6 w-full">
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                          <input type="text" id="update_status" name="update_status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="completed" disabled>
+                          <input type="text"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled value="<?php echo $row['status'] ?>">
                         </div>
 
+</div>
 
 
-
-                        <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                          <button data-modal-hide="updateModal<?php echo $row['taskid']; ?>" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
-                          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update</button>
-                        </div>
+                         
                       </form>
                     </div>
                   </div>
@@ -353,6 +399,8 @@ include "../include/Usersidebar.php";
       </div>
     </div>
   </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../backend/jquery.js"></script>
   <script>
     // Get the current date and time in UTC
     const currentDateTimeUTC = new Date();

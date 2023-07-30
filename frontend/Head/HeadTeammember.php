@@ -244,7 +244,8 @@ while (checkUserIdInDatabase($generatedUserId)) {
     </div>
     </div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../backend/jquery.js"></script>
     <script>
         function deleteuser(user_id) {
             if (confirm('Are you sure you want to delete this user?')) {

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Team Monitoring</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="./Login.css">
 </head>
 
@@ -19,7 +19,14 @@
         <h1 class="text-3xl">Welcome back</h1>
         <p class="text-md">Welcomeback! Please enter your detail</p>
       </div>
-      <form class=" max-w-[700px]  " id="loginForm">
+      <div class="  p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 hidden" id="success-alert" role="alert">
+  <span class="font-medium">Success alert!</span> Change a few things up and try submitting again.
+</div>
+
+<div class="  p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 hidden" id="failed-alert" role="alert">
+  <span class="font-medium">Warning alert!</span> User ID or Password is incorrect
+ </div>
+      <form class=" max-w-[700px]" id="login-form">
 
         <div class="mb-6">
           <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email address</label>
@@ -36,66 +43,15 @@
           </div>
           <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">I agree with the <a href="#" class="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a>.</label>
         </div>
-        <button type="submit" id= "submitBtn"class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
       </form>
 
-      <!-- <form  action="../../backend/login.php" method="POST">
-  <h1 class="text-xl">Welcome back</h1>
-  <p>Welcomeback! Please enter your detail</p>
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" class="form-control  " id="username" name="username" aria-describedby="emailHelp" placeholder="Enter email" required>
+      
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="../../backend/jquery.js"></script>  
 
-    </div>
-    <div class="form-group">
-    <label class="h6">Password</label>
-      <input type="password" class="form-control  " id="password" name="password" placeholder="Password" required>
-    </div>
-    <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Remember me </label>
-  </div>
-    <div class="p-2"></div>
-    <button  type="submit" class="btn w-100 ">Submit</button>
-  </form> -->
-    </div>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Handle form submission on button click
-        $("#submitBtn").click(function () {
-            // Get form data
-            var formData = $("#loginForm").serialize();
-            
-            // Send AJAX request to the PHP login script
-            $.ajax({
-                url: "../../backend/connection.php",
-                method: "POST",
-                data: formData,
-                dataType: "json",
-                success: function (response) {
-                    // Handle the response from the PHP script
-                    if (response.success) {
-                        // Login successful, redirect based on user role
-                        if (response.role === "admin") {
-                            window.location.href = "../../frontend/Head/Headdashboard.php";
-                        } else {
-                            window.location.href = "../../frontend/Team/Userdashboard.php";
-                        }
-                    } else {
-                        // Invalid password or user does not exist
-                        alert(response.message);
-                    }
-                },
-                error: function (error) {
-                    // Handle AJAX error (if any)
-                    console.error("AJAX error:", error);
-                }
-            });
-        });
-    });
-</script>
 </body>
 
 </html>

@@ -1,19 +1,23 @@
 <?php
-
-//database_connection 
+// database_connection.php
+// database_connection.php
 $servername = "localhost";
-$username = "root";
-$password = "";
-$database = "taskmonitoring";
+$username = "id21047632_emjay";
+$password = "Qwerty03!";
+$database = "id21047632_taskmonitoring";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
 } catch(PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    // Log the error
+    error_log("Connection failed: " . $e->getMessage());
+
+    // Display a user-friendly message
+    die("Unable to connect to the database. Please try again later.");
 }
 
+// Start the session after handling the database connection
 session_start();
 
 $username = '';
@@ -23,15 +27,22 @@ $role = '';
 $error_message = '';
 $success_message='';
 $taskAssigned = false;
-$taskOngoing= false;
- 
-if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-}
- 
+$taskOngoing = false;
 
-//check if the user exists in the database
-//login conncetion 
+ if (isset($_SESSION['user_id'])) {
+        // Retrieve the user_id from the session
+        $user_id = $_SESSION['user_id'];
+    }
+
+if (isset($_GET["action"]) && $_GET["action"] === "logout") {
+    // Destroy all session data
+    session_start(); // Make sure to start the session first
+    session_destroy();
+
+    // Redirect the user back to the same page after logout
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+}
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($_POST["password"])) {
     $user_id = $_POST["user_id"];
     $password = $_POST["password"];
@@ -47,25 +58,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($
         // Verify the password
         if ($password === $user["password"]) {
             // Password is correct
-           
+
             $_SESSION['user_id'] = $user_id;
 
-            // Return JSON response for successful login
-            echo json_encode(array("success" => true, "role" => $user["role"]));
-            exit();
+            // Check the user role
+            $role = $user["role"];
+            if ($role === "admin") {
+                // Return a success response for admin
+                echo "success_admin";
+            } else {
+                // Return a success response for normal user
+                echo "success_user";
+            }
         } else {
             // Invalid password
-            echo json_encode(array("success" => false, "message" => "Invalid password"));
-            exit();
+            echo "Invalid password";
         }
     } else {
         // User does not exist
-        echo json_encode(array("success" => false, "message" => "User does not exist"));
-        exit();
+        echo "User not found";
     }
 }
 
-  
 // Fetch all user data
 $query = "SELECT * FROM usercredential WHERE role IN ('Documentation', 'Frontend', 'Backend', 'UI/UX Designer', 'Database Designer', 'QA Tester', 'Content Creator', 'Business Analyst')";
 $stmt = $conn->prepare($query);
@@ -78,40 +92,40 @@ $allUserData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Data insertion process
 if ($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST['action'])) {
     // Insert data to database
-    $user_id = $_POST['user_iduseracc'] ?? '';
-    $avatar_tmp_name = $_FILES['avataruseracc']['tmp_name'] ?? '';
-    $username = $_POST['usernameuseracc'] ?? '';
-    $password = $_POST['passworduseracc'] ?? '';
-    $role = $_POST['roleuseracc'] ?? '';
+    $user_iduseracc = $_POST['user_iduseracc'] ?? '';
+    $avatar_tmp_nameuseracc = $_FILES['avataruseracc']['tmp_name'] ?? '';
+    $usernameuseracc = $_POST['usernameuseracc'] ?? '';
+    $passworduseracc = $_POST['passworduseracc'] ?? '';
+    $roleuseracc = $_POST['roleuseracc'] ?? '';
 
-    if (!empty($user_id)) {
+    if (!empty($user_iduseracc)) {
         // Hash the password before storing it in the database
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $hashedPassword = password_hash($passworduseracc, PASSWORD_DEFAULT);
 
         // Perform the file upload
-        if (!empty($avatar_tmp_name)) {
+        if (!empty($avatar_tmp_nameuseracc)) {
             // Read the binary image data from the uploaded file
-            $imageData = file_get_contents($avatar_tmp_name);
+            $imageDatauseracc = file_get_contents($avatar_tmp_nameuseracc);
         } else {
             // Set a default image data if no avatar is uploaded
-            $imageData = file_get_contents('default_avatar.jpg'); // Provide the path to your default avatar image
+            $imageDatauseracc = file_get_contents('default_avatar.jpg'); // Provide the path to your default avatar image
         }
 
         // Insert data into the database
         $insertQuery = "INSERT INTO usercredential (user_id, username, avatar, password, role) VALUES (:user_id, :username, :avatar, :password, :role)";
         $insertStatement = $conn->prepare($insertQuery);
-        $insertStatement->bindParam(':user_id', $user_id);
-        $insertStatement->bindParam(':username', $username);
-        $insertStatement->bindParam(':avatar', $imageData, PDO::PARAM_LOB);
+        $insertStatement->bindParam(':user_id', $user_iduseracc);
+        $insertStatement->bindParam(':username', $usernameuseracc);
+        $insertStatement->bindParam(':avatar', $imageDatauseracc, PDO::PARAM_LOB);
         $insertStatement->bindParam(':password', $hashedPassword);
-        $insertStatement->bindParam(':role', $role);
+        $insertStatement->bindParam(':role', $roleuseracc);
         $insertStatement->execute();
 
         header("Location: ./HeadTeammember.php");
         exit();
     }
 }
- 
+
 
 //update user account for Headtaskassign.php
 
@@ -132,12 +146,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && $_POST['
 
     // Build the update query based on whether the user wants to update the avatar or not
     if (empty($imageData)) {
-        $updateQuery = "UPDATE usercredential SET username = :username, password = :password, role = :role WHERE user_id = :user_id";
+        $updateQueryuseracc = "UPDATE usercredential SET username = :username, password = :password, role = :role WHERE user_id = :user_id";
     } else {
-        $updateQuery = "UPDATE usercredential SET username = :username, avatar = :avatar, password = :password, role = :role WHERE user_id = :user_id";
+        $updateQueryuseracc = "UPDATE usercredential SET username = :username, avatar = :avatar, password = :password, role = :role WHERE user_id = :user_id";
     }
 
-    $updateuseracc = $conn->prepare($updateQuery);
+    $updateuseracc = $conn->prepare($updateQueryuseracc);
     $updateuseracc->bindParam(':user_id', $user_id);
     $updateuseracc->bindParam(':username', $username);
     if (!empty($imageData)) {
@@ -153,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && $_POST['
 
 //delete user account for Headtaskassign.php
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['user_id'])) {
- 
+
     // Delete user by user_id
     $user_id = $_POST['user_id'];
     $deleteQuery = "DELETE FROM usercredential WHERE user_id = :user_id";
@@ -194,6 +208,7 @@ if ($result) {
 if ($result && !empty($result['avatar'])) {
     $imageData = $result['avatar'];
 }
+ 
 // //update data to database
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Check if the required keys are present in $_POST array
@@ -209,35 +224,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Read the binary image data from the uploaded file
             $imageData = file_get_contents($avatar);
-
-            // Prepare the update query with the image data
-            $updatequery = "UPDATE usercredential SET username=:updateusername, avatar=:avatar_data, password=:updatepassword, confirmpassword=:confirmpassword WHERE user_id=:user_id";
-            $updatestmt = $conn->prepare($updatequery);
-            $updatestmt->bindParam(':updateusername', $updateusername);
-            $updatestmt->bindParam(':avatar_data', $imageData, PDO::PARAM_LOB); // Use PARAM_LOB to handle binary data
-            $updatestmt->bindParam(':updatepassword', $updatepassword);
-            $updatestmt->bindParam(':confirmpassword', $confirmpassword);
-            $updatestmt->bindParam(':user_id', $user_id);
-
-            if ($updatestmt->execute()) {
-                // The update was successful, set the success message
-                $success_message = 'Update successful!';
-
-                // Determine the redirect location based on the user's role
-                if ($role === 'admin') {
-                    header("Location: ../../frontend/Head/Headsetting.php");
-                } else {
-                    header("Location: ../../frontend/Team/Usersetting.php");
-                }
-                exit; // Important: Always exit after a redirect to prevent further execution of the script
-            } else {
-                $error_message = "Error updating data.";
-            }
         } else {
-            $error_message = "Error uploading the avatar.";
+            // No new avatar was uploaded, set $imageData to NULL or any default avatar data if needed
+            $imageData = null; // or provide a default avatar image if you have one
         }
-    } else {
-        $error_message = "Some data is missing.";
+
+        // Prepare the update query with or without the avatar data
+        if ($imageData !== null) {
+            $updatequery = "UPDATE usercredential SET username=:updateusername, avatar=:avatar_data, password=:updatepassword, confirmpassword=:confirmpassword WHERE user_id=:user_id";
+        } else {
+            $updatequery = "UPDATE usercredential SET username=:updateusername, password=:updatepassword, confirmpassword=:confirmpassword WHERE user_id=:user_id";
+        }
+
+        $updatestmt = $conn->prepare($updatequery);
+        $updatestmt->bindParam(':updateusername', $updateusername);
+        $updatestmt->bindParam(':updatepassword', $updatepassword);
+        $updatestmt->bindParam(':confirmpassword', $confirmpassword);
+        $updatestmt->bindParam(':user_id', $user_id);
+
+        if ($imageData !== null) {
+            $updatestmt->bindParam(':avatar_data', $imageData, PDO::PARAM_LOB); // Use PARAM_LOB to handle binary data
+        }
+
+        if ($updatestmt->execute()) {
+            // The update was successful, set the success message
+
+            // Determine the redirect location based on the user's role
+            if ($roles === 'admin') {
+                echo "admin setting updated";
+            } else {
+                echo "user setting updated";
+            }
+            exit; // Important: Always exit after a redirect to prevent further execution of the script
+        }
     }
 }
 
@@ -245,8 +264,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
 
-  //insert data to database 
-  if ($_SERVER["REQUEST_METHOD"] === "POST") {
+//insert data to database 
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $userid = $_POST['userid'] ?? ''; // Empty value
     $taskid = $_POST['taskid'] ?? ''; // Empty value
     $subject = $_POST['subject'] ?? ''; // Empty value
@@ -254,56 +273,56 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $role = $_POST['role'] ?? ''; // Empty value
     $status = $_POST['status'] ?? ''; // Empty value
     $date_time_taskassign = $_POST['date_time_taskassign'] ?? '';
-    
 
-    if (!empty($userid) )   {
-      $insertQuery = "INSERT INTO taskassign (user_id,taskid, subject,task,role,status,date_time_taskassign) VALUES (:userid,:taskid, :subject,:task,:role,:status,:date_time_taskassign)";
 
-      $insertStmt = $conn->prepare($insertQuery);
-      $insertStmt->bindParam(':userid', $userid);
-      $insertStmt->bindParam(':taskid', $taskid);
-      $insertStmt->bindParam(':subject', $subject);
-      $insertStmt->bindParam(':task', $task);
-      $insertStmt->bindParam(':role', $role);
-      $insertStmt->bindParam(':status', $status);
-    $insertStmt->bindParam(':date_time_taskassign', $date_time_taskassign);
-    
-      $insertStmt->execute();
-      header("Location: ./Headteamtaskassign.php");
-      exit();
+    if (!empty($userid)) {
+        $insertQuery = "INSERT INTO taskassign (user_id,taskid, subject,task,role,status,date_time_taskassign) VALUES (:userid,:taskid, :subject,:task,:role,:status,:date_time_taskassign)";
+
+        $insertStmt = $conn->prepare($insertQuery);
+        $insertStmt->bindParam(':userid', $userid);
+        $insertStmt->bindParam(':taskid', $taskid);
+        $insertStmt->bindParam(':subject', $subject);
+        $insertStmt->bindParam(':task', $task);
+        $insertStmt->bindParam(':role', $role);
+        $insertStmt->bindParam(':status', $status);
+        $insertStmt->bindParam(':date_time_taskassign', $date_time_taskassign);
+
+        $insertStmt->execute();
+        header("Location: ./Headteamtaskassign.php");
+        exit();
     }
-  }
+}
 
-  
- 
-  //query for dropdown list 
-  $credentialquery = "SELECT * FROM usercredential Where role='Documentation' OR role='Frontend' OR role='Backend'OR role='UI/UX Designer'OR role='Database Designer'OR role='QA Tester'OR role='Content Creator'OR role='Business Analyst'";
-  $credentialstmt = $conn->prepare($credentialquery);
-  $credentialstmt->execute();
-  $credentialresult = $credentialstmt->fetchAll(PDO::FETCH_ASSOC);
 
-  $query = "SELECT MAX(taskid) AS max_id FROM taskassign";
-  try {
-      $stmt = $conn->query($query);
-      $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      $maxID = $row['max_id'];
-      // Extract the numeric part of the Task ID to use for auto-increment
-      $currentNum = (int)substr($maxID, strlen("Task_"));
-  } catch (PDOException $e) {
-      die("Error: " . $e->getMessage());
-  }
-    //query select taskassign join usercredential where role is documentation or frontend
-    $query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
+
+//query for dropdown list 
+$credentialquery = "SELECT * FROM usercredential Where role='Documentation' OR role='Frontend' OR role='Backend'OR role='UI/UX Designer'OR role='Database Designer'OR role='QA Tester'OR role='Content Creator'OR role='Business Analyst'";
+$credentialstmt = $conn->prepare($credentialquery);
+$credentialstmt->execute();
+$credentialresult = $credentialstmt->fetchAll(PDO::FETCH_ASSOC);
+
+$query = "SELECT MAX(taskid) AS max_id FROM taskassign";
+try {
+    $stmt = $conn->query($query);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $maxID = $row['max_id'];
+    // Extract the numeric part of the Task ID to use for auto-increment
+    $currentNum = (int)substr($maxID, strlen("Task_"));
+} catch (PDOException $e) {
+    die("Error: " . $e->getMessage());
+}
+//query select taskassign join usercredential where role is documentation or frontend
+$query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
     FROM taskassign
    JOIN usercredential ON taskassign.user_id = usercredential.user_id
     WHERE taskassign.role='Documentation' OR taskassign.role='Frontend' OR taskassign.role='Backend'OR taskassign.role='UI/UX Designer'OR taskassign.role='Database Designer'OR taskassign.role='QA Tester'OR taskassign.role='Content Creator'OR taskassign.role='Business Analyst'";
-   $stmt = $conn->prepare($query);
-   $stmt->execute();
-   $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-   
-  //query delete for task assign where role is documentation and frontend
-  if (isset($_GET['delete_taskid'])) {
+
+//query delete for task assign where role is documentation and frontend
+if (isset($_GET['delete_taskid'])) {
     $taskid = $_GET['delete_taskid'];
 
     $deleteQuery = "DELETE FROM taskassign WHERE taskid=:taskid";
@@ -312,28 +331,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $deleteStmt->execute();
     header("Location: ./Headteamtaskassign.php");
     exit();
-  }
-   
+}
 
 
-  
 
-  if (isset($_POST['update_taskid']) ) {
+
+
+if (isset($_POST['update_taskid'])) {
     $taskid = $_POST['update_taskid'];
     $updatesubject = $_POST['update_subject'];
     $updatestatus = $_POST['update_status'];
     $updatedTask = $_POST['update_task'];
+    $updatedComment = $_POST['update_comment'];
     $updatedate_time_task_start = $_POST['updatedate_time_task_start'];
     $updatedate_time_task_end = $_POST['updatedate_time_task_end'];
-    
 
-
+    if (isset($_FILES['update_image_proof']) && $_FILES['update_image_proof']['error'] === UPLOAD_ERR_OK) {
+        $Proofimage = $_FILES['update_image_proof']['tmp_name'];
+        // You can perform additional validation or processing on the uploaded image if needed
+    } else {
+        // If no new image is uploaded, set $updatedProofimage to NULL or any default image path if needed
+        $Proofimage = null; // or provide a default image path if you have one
+    }
+  
     // Perform the database update operation
     // Assuming you have a database connection established
-    $updateQuery = "UPDATE taskassign SET subject=:subject,task=:task,status=:status,date_time_task_start=:date_time_task_start,date_time_task_end=:date_time_task_end WHERE taskid=:taskid";
+    $updateQuery = "UPDATE taskassign SET subject=:subject,task=:task,task_image=:task_image,comment=:comment,status=:status,date_time_task_start=:date_time_task_start,date_time_task_end=:date_time_task_end WHERE taskid=:taskid";
     $updateStmt = $conn->prepare($updateQuery);
     $updateStmt->bindParam(':subject', $updatesubject);
     $updateStmt->bindParam(':task', $updatedTask);
+    $updateStmt->bindParam(':task_image', $Proofimage);
+    $updateStmt->bindParam(':comment', $updatedComment);
     $updateStmt->bindParam(':status', $updatestatus);
     $updateStmt->bindParam(':date_time_task_start', $updatedate_time_task_start);
     $updateStmt->bindParam(':date_time_task_end', $updatedate_time_task_end);
@@ -341,26 +369,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $updateStmt->execute();
 
     // Redirect to the desired page after the update
-      if ($roles ==='admin') {
-                    header("Location: ./Headteamtaskassign.php");
+    if ($roles === 'admin') {
+        header("Location: ./Headteamtaskassign.php");
+    } else {
 
-                    
-                } else {
-                  
-                    header("Location: ./Userdashboard.php");
-                   
-                }
-  }
+        header("Location: ./Userdashboard.php");
+    }
+}
 
-    
-  
-  $totalRowCount = 0; // Initialize the variable
 
-  $countQuery = "SELECT COUNT(*) FROM taskassign where user_id = :user_id";
-  $countStmt = $conn->prepare($countQuery);
-  $countStmt->bindParam(':user_id', $user_id);
-  if ($countStmt) {
-      $countStmt->execute();
-      $totalRowCount = $countStmt->fetchColumn();
-  }
+
+//count total task assign members
+$statuses = array('completed', 'pending', 'ongoing');
+$totalRowCounts = array();
+
+foreach ($statuses as $status) {
+    $countQuery = "SELECT COUNT(*) FROM taskassign WHERE user_id = :user_id AND status = :status";
+    $countStmt = $conn->prepare($countQuery);
+    $countStmt->bindParam(':user_id', $user_id);
+    $countStmt->bindParam(':status', $status);
+
+    if ($countStmt) {
+        $countStmt->execute();
+        $totalRowCounts[$status] = $countStmt->fetchColumn();
+    }
+}
+
 ?>
