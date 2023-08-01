@@ -2,9 +2,9 @@
 // database_connection.php
 // database_connection.php
 $servername = "localhost";
-$username = "id21047632_emjay";
-$password = "Qwerty03!";
-$database = "id21047632_taskmonitoring";
+$username = "root";
+$password = "";
+$database = "taskmonitoring";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
@@ -29,14 +29,21 @@ $success_message='';
 $taskAssigned = false;
 $taskOngoing = false;
 
- if (isset($_SESSION['user_id'])) {
-        // Retrieve the user_id from the session
-        $user_id = $_SESSION['user_id'];
-    }
-
+ 
+if (isset($_SESSION['user_id'])) {
+    // Get the user_id from the session
+    $user_id = $_SESSION['user_id'];
+  
+     
+}
 if (isset($_GET["action"]) && $_GET["action"] === "logout") {
-    // Destroy all session data
-    session_start(); // Make sure to start the session first
+    // Update user_status to 1 (assuming user_status is an integer column)
+    $updateQuery = "UPDATE usercredential SET user_status = 'offline' WHERE user_id = :user_id";
+    $updateStmt = $conn->prepare($updateQuery);
+    $updateStmt->bindParam(":user_id", $user_id);
+    $updateStmt->execute();
+
+    // Destroy the session
     session_destroy();
 
     // Redirect the user back to the same page after logout
@@ -70,6 +77,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($
                 // Return a success response for normal user
                 echo "success_user";
             }
+
+            // Update user_status to 1 
+            $updateQuery = "UPDATE usercredential SET user_status = 'online' WHERE user_id = :user_id";
+            $updateStmt = $conn->prepare($updateQuery);
+            $updateStmt->bindParam(":user_id", $user_id);
+            $updateStmt->execute();
         } else {
             // Invalid password
             echo "Invalid password";
@@ -79,13 +92,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($
         echo "User not found";
     }
 }
-
 // Fetch all user data
-$query = "SELECT * FROM usercredential WHERE role IN ('Documentation', 'Frontend', 'Backend', 'UI/UX Designer', 'Database Designer', 'QA Tester', 'Content Creator', 'Business Analyst')";
+$query = "SELECT * FROM usercredential WHERE role IN ('Documentation', 'Frontend', 'Backend', 'UI/UX Designer', 'Database Designer', 'QA Tester', 'Content Creator', 'Business Analyst') ";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $allUserData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+//count members
+$rowCount = $stmt->rowCount();
  
 
 //Open Headteamtaskassign.php
@@ -321,6 +334,25 @@ $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
+//dashboard count pending, ongoing, completed
+$countQuery = "SELECT
+    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending_count,
+    SUM(CASE WHEN status = 'ongoing' THEN 1 ELSE 0 END) AS ongoing_count,
+    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed_count
+    FROM taskassign";
+
+$countStmt = $conn->prepare($countQuery);
+$countStmt->execute();
+$countResult = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+
+//admin dashboard user status
+
+$query= "SELECT * FROM usercredential WHERE user_status='active'";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$resultactive = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 //query delete for task assign where role is documentation and frontend
 if (isset($_GET['delete_taskid'])) {
     $taskid = $_GET['delete_taskid'];
@@ -394,5 +426,4 @@ foreach ($statuses as $status) {
         $totalRowCounts[$status] = $countStmt->fetchColumn();
     }
 }
-
 ?>

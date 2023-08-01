@@ -10,6 +10,7 @@ $(document).ready(function () {
       url: "../../backend/connection.php",
       data: formData,
       success: function (response) {
+        
         if (response === "success_admin") {
           $("#success-alert").removeClass("hidden");
           setTimeout(function () {
@@ -114,4 +115,13 @@ $(document).ready(function () {
     e.preventDefault();
     logout();
   });
+});
+
+
+  // Send AJAX request to update user_status to 'offline' when the user closes the browser
+  window.addEventListener("beforeunload", function () {
+    // Send AJAX request to update user_status to 'offline'
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../../backend/connection.php?action=logout", false);
+    xhr.send();
 });

@@ -34,11 +34,8 @@
                                     Neil Sims
                                 </p>
                                 <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                    <?php if (!empty($user_id)) : ?>
-                                <h2>Hello, <?php echo $user_id; ?>!</h2>
-                            <?php else : ?>
-                                <h2>user_id not found</h2>
-                            <?php endif; ?>
+                                    <?php echo $user_id?>
+                               
 
 
                             </p>
