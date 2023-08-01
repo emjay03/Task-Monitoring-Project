@@ -117,11 +117,16 @@ $(document).ready(function () {
   });
 });
 
-
-  // Send AJAX request to update user_status to 'offline' when the user closes the browser
-  window.addEventListener("beforeunload", function () {
-    // Send AJAX request to update user_status to 'offline'
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "../../backend/connection.php?action=logout", false);
-    xhr.send();
+window.addEventListener("unload", function () {
+  // Send asynchronous AJAX request to update user_status to 'offline'
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "../../backend/connection.php?action=logout", true);
+  xhr.send();
 });
+
+// window.addEventListener("beforeunload", function () {
+//     // Send asynchronous AJAX request to update user_status to 'offline'
+//     var xhr = new XMLHttpRequest();
+//     xhr.open("GET", "../../backend/connection.php?action=logout", true);
+//     xhr.send();
+// });
