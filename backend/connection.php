@@ -347,10 +347,11 @@ $countResult = $countStmt->fetchAll(PDO::FETCH_ASSOC);
 
 //admin dashboard user status
 
-$query= "SELECT * FROM usercredential WHERE user_status='active'";
+$query = "SELECT * FROM usercredential WHERE user_status IN ('online', 'offline') AND role IN ('Documentation', 'Frontend', 'Backend', 'UI/UX Designer', 'Database Designer', 'QA Tester', 'Content Creator', 'Business Analyst')";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $resultactive = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 //query delete for task assign where role is documentation and frontend
