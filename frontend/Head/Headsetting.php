@@ -1,6 +1,5 @@
 <?php
-  include "../../backend/connection.php";
-  include "../include/Headsidebar.php";
+include "../../backend/connection.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,10 +11,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../Login/Login.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.js"></script>
-   
+
 </head>
+
 <body>
 
+<?php
+include "../include/Headsidebar.php";
+?>    
+ 
     <div class="p-4 sm:ml-64">
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
 
@@ -27,8 +31,8 @@
             </div>
 
             <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 hidden" id="errorupdate-alert" role="alert">
-  <span class="font-medium">Warning alert!</span> Password and Confirm Password not match.
-</div>
+                <span class="font-medium">Warning alert!</span> Password and Confirm Password not match.
+            </div>
             <form id="usersetting" enctype="multipart/form-data">
                 <div class="mb-6">
                     <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
@@ -80,4 +84,5 @@
     <script src="../../backend/jquery.js"></script>
 
 </body>
+
 </html>
