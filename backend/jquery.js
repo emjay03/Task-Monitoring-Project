@@ -1,4 +1,4 @@
-//login.php ajax
+// login.php ajax
 
 $(document).ready(function () {
   $("#login-form").submit(function (event) {
@@ -130,3 +130,5 @@ window.addEventListener("unload", function () {
 //     xhr.open("GET", "../../backend/connection.php?action=logout", true);
 //     xhr.send();
 // });
+
+

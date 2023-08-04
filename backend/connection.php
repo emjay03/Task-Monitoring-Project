@@ -18,7 +18,7 @@ try {
 }
 
 // Start the session after handling the database connection
-session_start();
+ 
 
 $username = '';
 $user_id = '';
@@ -29,13 +29,12 @@ $success_message='';
 $taskAssigned = false;
 $taskOngoing = false;
 
- 
+session_start();
 if (isset($_SESSION['user_id'])) {
-    // Get the user_id from the session
+    // User is logged in, proceed with displaying the content or performing any actions
     $user_id = $_SESSION['user_id'];
-  
-     
-}
+}  
+ 
 if (isset($_GET["action"]) && $_GET["action"] === "logout") {
     // Update user_status to 1 (assuming user_status is an integer column)
     $updateQuery = "UPDATE usercredential SET user_status = 'offline' WHERE user_id = :user_id";
@@ -50,11 +49,11 @@ if (isset($_GET["action"]) && $_GET["action"] === "logout") {
     header("Location: ".$_SERVER['PHP_SELF']);
     exit();
 }
+ 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($_POST["password"])) {
     $user_id = $_POST["user_id"];
     $password = $_POST["password"];
 
-    // Query the database to check if the user exists
     $query = "SELECT * FROM usercredential WHERE user_id = :user_id";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(":user_id", $user_id);
@@ -83,15 +82,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["user_id"]) && isset($
             $updateStmt = $conn->prepare($updateQuery);
             $updateStmt->bindParam(":user_id", $user_id);
             $updateStmt->execute();
-        } else {
-            // Invalid password
-            echo "Invalid password";
-        }
-    } else {
-        // User does not exist
-        echo "User not found";
-    }
-}
+        }   
+    }  
+} 
 // Fetch all user data
 $query = "SELECT * FROM usercredential WHERE role IN ('Documentation', 'Frontend', 'Backend', 'UI/UX Designer', 'Database Designer', 'QA Tester', 'Content Creator', 'Business Analyst') ";
 $stmt = $conn->prepare($query);
