@@ -318,13 +318,22 @@ try {
     die("Error: " . $e->getMessage());
 }
 //query select taskassign join usercredential where role is documentation or frontend
-$query = "SELECT taskassign.*,usercredential.avatar,usercredential.username
+$query = "SELECT taskassign.*, usercredential.avatar, usercredential.username
     FROM taskassign
-   JOIN usercredential ON taskassign.user_id = usercredential.user_id
-    WHERE taskassign.role='Documentation' OR taskassign.role='Frontend' OR taskassign.role='Backend'OR taskassign.role='UI/UX Designer'OR taskassign.role='Database Designer'OR taskassign.role='QA Tester'OR taskassign.role='Content Creator'OR taskassign.role='Business Analyst'";
+    JOIN usercredential ON taskassign.user_id = usercredential.user_id
+    WHERE (taskassign.role = 'Documentation' OR
+           taskassign.role = 'Frontend' OR
+           taskassign.role = 'Backend' OR
+           taskassign.role = 'UI/UX Designer' OR
+           taskassign.role = 'Database Designer' OR
+           taskassign.role = 'QA Tester' OR
+           taskassign.role = 'Content Creator' OR
+           taskassign.role = 'Business Analyst')
+           AND taskassign.status IN ('pending', 'ongoing', 'completed')"; 
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 //dashboard count pending, ongoing, completed

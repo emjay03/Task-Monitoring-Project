@@ -50,38 +50,7 @@
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
- 
-<script>
-document.getElementById('login-form').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent form submission
-
-  const formData = new FormData(this);
-  const url = "../../backend/connection.php"; // Replace this with the actual URL of your API
-
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams(formData),
-  })
-    .then(response => response.text())
-    .then(data => {
-      // Process the response data here
-      document.getElementById('response-message').innerText = data;
-      if (data === "success_admin" || data === "success_user") {
-        // Redirect to the dashboard page after successful login
-        window.location.href = "../../frontend/Head/Headdashboard.php"; // Replace this with the actual URL of your dashboard page
-      }
-    })
-    .catch(error => {
-      // Handle errors here
-      document.getElementById('response-message').innerText = "Error: " + error.message;
-    });
-});
-
-</script>
-  
+  <script src="../../backend/jquery.js"></script>
 
 </body>
 
